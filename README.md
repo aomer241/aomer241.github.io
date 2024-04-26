@@ -20,7 +20,7 @@
        }
        h1 {
            text-align: center; /* Center the heading */
-           margin-top: 20px; /* Add margin to the top */
+           margin-top: -100px; /* Add margin to the top */
        }
        #parking-map {
            display: grid;
@@ -50,52 +50,40 @@
 <div id="parking-map">
 <!-- Parking spots will be dynamically added here -->
 </div>
-<script src="https://www.gstatic.com/firebasejs/9.6.2/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.2/firebase-database.js"></script>
 <script>
-       // Firebase configuration
-       const firebaseConfig = {
-           apiKey: "YOUR_API_KEY",
-           authDomain: "YOUR_AUTH_DOMAIN",
-           projectId: "YOUR_PROJECT_ID",
-           storageBucket: "YOUR_STORAGE_BUCKET",
-           messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-           appId: "YOUR_APP_ID"
-       };
-       // Initialize Firebase
-       firebase.initializeApp(firebaseConfig);
-       const database = firebase.database();
-       // Function to handle changes in parking spot status
-       function handleSpotStatusChange(snapshot) {
-           const spotId = snapshot.key;
-           const spot = document.getElementById(spotId);
-           const isSpotInUse = snapshot.val();
-           spot.classList.toggle('in-use', isSpotInUse);
+       // JavaScript to handle QR code scanning and changing parking spot status
+       // Add your JavaScript code here
+       // For example:
+       function changeStatus(parkingSpotId) {
+           var spot = document.getElementById(parkingSpotId);
+           if (spot.classList.contains('in-use')) {
+               spot.classList.remove('in-use');
+           } else {
+               spot.classList.add('in-use');
+           }
        }
        // Function to create the parking spot div
        function createParkingSpot(spotId) {
-           const spot = document.createElement('div');
+           var spot = document.createElement('div');
            spot.className = 'parking-spot';
 spot.id = spotId;
            spot.onclick = function() {
-               database.ref('parking/' + spotId).set(spot.classList.contains('in-use') ? false : true);
+               changeStatus(spotId);
            };
            spot.innerText = spotId; // Add label to the spot
            return spot;
        }
        // Simulate adding parking spots to the map
        document.addEventListener('DOMContentLoaded', function() {
-           const parkingMap = document.getElementById('parking-map');
-           const columns = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
-           const rows = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+           var parkingMap = document.getElementById('parking-map');
+           var columns = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+           var rows = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
            // Loop through columns and rows to create parking spots
            columns.forEach(function(col) {
                rows.forEach(function(row) {
-                   const spotId = col + row;
-                   const spot = createParkingSpot(spotId);
+                   var spotId = col + row;
+                   var spot = createParkingSpot(spotId);
                    parkingMap.appendChild(spot);
-                   // Listen for changes in parking spot status
-                   database.ref('parking/' + spotId).on('value', handleSpotStatusChange);
                });
            });
        });
